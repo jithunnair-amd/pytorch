@@ -394,7 +394,6 @@ class TestSparse(TestCase):
         self.assertEqual(exp_i, x._indices())
         self.assertEqual(exp_v, x._values())
 
-    @skipIfRocm
     def test_clone(self):
         x, _, _ = self._gen_sparse(4, 20, 5)
         if self.is_uncoalesced:
@@ -543,7 +542,6 @@ class TestSparse(TestCase):
         test_shape(1000, 100, 100)
         test_shape(3000, 64, 300)
 
-    @skipIfRocm
     def test_hsmm(self):
         def test_shape(di, dj, dk):
             x = self._gen_sparse(2, 20, [di, dj])[0]
@@ -618,7 +616,6 @@ class TestSparse(TestCase):
         self._test_spadd_shape([50, 30, 20], [2])
         self._test_spadd_shape([5, 5, 5, 5, 5, 5], [2])
 
-    @skipIfRocm
     def test_norm(self):
         x, _, _ = self._gen_sparse(3, 10, 100)
         y = x.coalesce()
@@ -701,7 +698,6 @@ class TestSparse(TestCase):
         self._test_basic_ops_shape([50, 30, 20], [2])
         self._test_basic_ops_shape([5, 5, 5, 5, 5, 5], [2])
 
-    @skipIfRocm
     def test_add_dense_sparse_mismatch(self):
         x = torch.zeros([3, 4], dtype=self.value_dtype, device=self.device)
         sparse_y = self.SparseTensor(torch.zeros(1, 4, dtype=torch.int64, device=self.device),
@@ -949,7 +945,6 @@ class TestSparse(TestCase):
         self._test_sparse_mask_shape([50, 30, 20], [2])
         self._test_sparse_mask_shape([5, 5, 5, 5, 5, 5], [2])
 
-    @skipIfRocm
     def test_sparse_add_coalesce(self):
         i = self.IndexTensor([[1, 2, 1]])
         v = self.ValueTensor([3, 4, 5])
@@ -966,7 +961,6 @@ class TestSparse(TestCase):
 
     @cuda_only
     @unittest.skipIf(torch.cuda.device_count() < 2, "only one GPU detected")
-    @skipIfRocm
     def test_same_gpu(self):
         i = self.IndexTensor([[2]]).cuda(1)
         v = self.ValueTensor([5]).cuda(1)
@@ -1044,7 +1038,6 @@ class TestSparse(TestCase):
                             self.assertEqual(device, sparse_tensor._values().device)
                         self.assertEqual(True, sparse_tensor.requires_grad)
 
-    @skipIfRocm
     def test_factory_size_check(self):
         indices = self.IndexTensor([[1, 2], [0, 2]])
         values = self.ValueTensor([.5, .5])
@@ -1087,7 +1080,6 @@ class TestSparse(TestCase):
         expected_indices = torch.empty((4, 0), dtype=torch.long, device=device)
         self.assertEqual(tensor._indices(), expected_indices)
 
-    @skipIfRocm
     def test_factory_nnz(self):
         indices = self.IndexTensor([[0]])  # (sparseDims, nnz): (1, 1)
         values = self.ValueTensor([[1, 1], [1, 1]])  # (nnz, ...): (2, 2)
@@ -1115,7 +1107,6 @@ class TestSparse(TestCase):
         self._test_factory_tensor_shape([3, 0], [0, 2, 4, 0], [0, 0, 0, 2, 4, 0], [0, 0, 0, 2, 4, 0])
         self._test_factory_tensor_shape([3, 0], [0, 2, 4, 0], [1, 2, 3, 2, 4, 0], [1, 2, 3, 2, 4, 0])
 
-    @skipIfRocm
     def test_factory_dense_dims(self):
         indices = self.IndexTensor([[0]])
         values = self.ValueTensor([[[1, 1, 1], [1, 1, 1]]])
@@ -1133,7 +1124,6 @@ class TestSparse(TestCase):
         self.assertEqual(torch.int64, t.dtype)
 
     @cuda_only
-    @skipIfRocm
     def test_factory_device_type_inference(self):
         # both indices/values are CUDA
         shape = (1, 3)
@@ -1191,7 +1181,6 @@ class TestSparse(TestCase):
             TestTorch._test_empty_full(self, all_sparse_dtypes, torch.sparse_coo, None)
             TestTorch._test_empty_full(self, all_sparse_dtypes, torch.sparse_coo, torch.device('cuda:0'))
 
-    @skipIfRocm
     def test_is_sparse(self):
         x = torch.randn(3, 3)
         self.assertFalse(x.is_sparse)
@@ -1233,7 +1222,6 @@ class TestSparse(TestCase):
         self.assertEqual(x.to_dense().view(-1)[0:x_v_numel].view(x_v),
                          x_dense.view(-1)[0:x_v_numel].view(x_v))
 
-    @skipIfRocm
     def test_resize(self):
         # 1. Increase the size of some dense dimensions [Supported]
         self._test_resize_shape([1, 1], [1, 2, 3], [2, 2, 3],
@@ -1307,7 +1295,6 @@ class TestCudaUncoalescedSparse(TestCudaSparse):
 
 class TestSparseOneOff(TestCase):
     @unittest.skipIf(not TEST_CUDA, 'CUDA not available')
-    @skipIfRocm
     def test_cuda_from_cpu(self):
         self.assertExpectedRaises(
             RuntimeError,
@@ -1316,7 +1303,6 @@ class TestSparseOneOff(TestCase):
                                              [3, 4, 4]))
 
     @unittest.skipIf(not TEST_CUDA, 'CUDA not available')
-    @skipIfRocm
     def test_cuda_sparse_cpu_dense_add(self):
         x = torch.zeros(3, 4, 4)
         sparse_y = torch.cuda.sparse.FloatTensor(torch.zeros(1, 4).long().cuda(),
