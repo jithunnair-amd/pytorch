@@ -936,7 +936,7 @@ def disable_module(input_file):
 def transpile_device_math(input_string):
     """ Temporarily replace std:: invocations of math functions with non-std:: versions."""
     # Extract device code positions
-    get_kernel_definitions = [k for k in re.finditer( r"(template[ ]*<(.*)>\n.*\n?)?(__global__|__device__) void[\n| ](\w+(\(.*\))?)\(", input_string)]
+    get_kernel_definitions = [k for k in re.finditer( r"(template[ ]*<(.*)>\n.*\n?)?(__global__|__device__)\s+\S+\s+(\S+(\(.*\))?)\(", input_string)]
 
     # Prepare output
     output_string = input_string
