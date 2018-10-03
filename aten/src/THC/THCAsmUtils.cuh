@@ -15,8 +15,7 @@ struct Bitfield<unsigned int> {
     len &= 0xff;
 
     unsigned int m = (1u << len) - 1u;
-    m <<= pos;
-    return val & m;
+    return (val >> pos) & m;
 #else
     unsigned int ret;
     asm("bfe.u32 %0, %1, %2, %3;" : "=r"(ret) : "r"(val), "r"(pos), "r"(len));
@@ -54,8 +53,7 @@ struct Bitfield<uint64_t> {
     len &= 0xff;
 
     uint64_t m = (1u << len) - 1u;
-    m <<= pos;
-    return val & m;
+    return (val >> pos) & m;
 #else
     uint64_t ret;
     asm("bfe.u64 %0, %1, %2, %3;" : "=l"(ret) : "l"(val), "r"(pos), "r"(len));
