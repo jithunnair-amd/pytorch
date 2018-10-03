@@ -104,7 +104,7 @@ __device__ __forceinline__ unsigned getLaneMaskLt() {
 }
 
 #if defined (__HIP_PLATFORM_HCC__)
-__device__ inline unsigned long long int getLaneMaskLe() {
+__device__ __forceinline__ unsigned long long int getLaneMaskLe() {
   std::uint64_t m = UINT64_MAX >> (sizeof(std::uint64_t) * CHAR_BIT - (getLaneId() + 1));
   return m;
 }
