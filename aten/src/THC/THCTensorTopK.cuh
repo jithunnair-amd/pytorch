@@ -218,11 +218,10 @@ __device__ DataType findPattern(DataType* smem,
                              BitDataType desired,
                              BitDataType desiredMask) {
 #ifdef __HIP_PLATFORM_HCC__
-  if (threadIdx.x < 64)
+  if (threadIdx.x < 64) {
 #else
-  if (threadIdx.x < 32)
+  if (threadIdx.x < 32) {
 #endif
-  {
     smem[threadIdx.x] = ScalarConvert<int, DataType>::to(0);
   }
   __syncthreads();
