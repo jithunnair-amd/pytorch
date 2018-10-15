@@ -1551,6 +1551,7 @@ class TestSparse(TestCase):
         x = self.SparseTensor(1, 0)
         self.assertTrue(x.is_sparse)
 
+    @skipIfRocm
     def test_resize_as(self):
         def do_test(t):
             y = t.new().resize_as_(t).zero_()
@@ -1563,7 +1564,6 @@ class TestSparse(TestCase):
         do_test(self.SparseTensor(3, 0))
         do_test(self.SparseTensor(3, 3))
 
-    @skipIfRocm
     def _test_resize_shape(self, x_i, x_v, x_size, y_i, y_v, y_size):
         x_v_numel = torch.zeros(x_v).numel()
         y_v_numel = torch.zeros(y_v).numel()
