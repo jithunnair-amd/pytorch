@@ -17,7 +17,11 @@ namespace at { namespace native {
 
 namespace {
 
+#ifdef __HIP_PLATFORM_HCC__
+static const int WARP_SIZE = 64;
+#else
 static const int WARP_SIZE = 32;
+#endif
 static const int BLOCKDIMY = 32;
 
 template
