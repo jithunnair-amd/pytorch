@@ -633,7 +633,7 @@ if(NOT BUILD_ATEN_MOBILE)
     hip_include_directories(${Caffe2_HIP_INCLUDES})
 
     set(Caffe2_HIP_DEPENDENCY_LIBS
-      ${rocrand_LIBRARIES} ${hiprand_LIBRARIES} ${PYTORCH_HIP_HCC_LIBRARIES} ${PYTORCH_MIOPEN_LIBRARIES} ${hipsparse_LIBRARIES})
+      ${rocrand_LIBRARIES} ${hiprand_LIBRARIES} ${rccl_libraries} ${PYTORCH_HIP_HCC_LIBRARIES} ${PYTORCH_MIOPEN_LIBRARIES} ${hipsparse_LIBRARIES})
     # TODO: There is a bug in rocblas and rocfft's cmake files that exports the wrong targets name in ${rocblas_LIBRARIES} and ${rocfft_LIBRARIES} respectively
     list(APPEND Caffe2_HIP_DEPENDENCY_LIBS
       roc::rocblas roc::rocfft)

@@ -94,6 +94,13 @@ ELSE()
   SET(MIOPEN_PATH $ENV{MIOPEN_PATH})
 ENDIF()
 
+# RCCL PATH
+IF(NOT DEFINED ENV{RCCL_PATH})
+  SET(RCCL_PATH ${ROCM_PATH}/rccl)
+ELSE()
+  SET(RCCL_PATH $ENV{RCCL_PATH})
+ENDIF()
+
 # Add HIP to the CMAKE Module Path
 set(CMAKE_MODULE_PATH ${HIP_PATH}/cmake ${CMAKE_MODULE_PATH})
 
@@ -143,6 +150,7 @@ IF(HIP_FOUND)
   set(rocfft_DIR ${ROCFFT_PATH}/lib/cmake/rocfft)
   set(hipsparse_DIR ${HIPSPARSE_PATH}/lib/cmake/hipsparse)
   set(rocsparse_DIR ${ROCSPARSE_PATH}/lib/cmake/rocsparse)
+  set(rccl_DIR ${RCCL_PATH}/lib/cmake/rccl)
 
   find_package_and_print_version(rocrand REQUIRED)
   find_package_and_print_version(hiprand REQUIRED)
@@ -152,6 +160,7 @@ IF(HIP_FOUND)
   find_package_and_print_version(rocfft REQUIRED)
   find_package_and_print_version(hipsparse REQUIRED)
   find_package_and_print_version(rocsparse REQUIRED)
+  find_package_and_print_version(rccl) #NOT REQUIRED FOR NOW UNTIL RCCL PACKAGE IS AVAILABLE
 
   FIND_LIBRARY(PYTORCH_HIP_HCC_LIBRARIES hip_hcc HINTS ${HIP_PATH}/lib)
   FIND_LIBRARY(PYTORCH_MIOPEN_LIBRARIES ${miopen_LIBRARIES} HINTS ${MIOPEN_PATH}/lib)
