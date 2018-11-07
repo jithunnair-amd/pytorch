@@ -111,6 +111,11 @@
 #   NCCL_INCLUDE_DIR
 #     specify where nccl is installed
 #
+#   RCCL_ROOT_DIR
+#   RCCL_LIB_DIR
+#   RCCL_INCLUDE_DIR
+#     specify where rccl is installed
+#
 #   MKLDNN_LIB_DIR
 #   MKLDNN_LIBRARY
 #   MKLDNN_INCLUDE_DIR
@@ -177,6 +182,8 @@ from tools.setup_helpers.miopen import (USE_MIOPEN, MIOPEN_LIBRARY,
                                         MIOPEN_LIB_DIR, MIOPEN_INCLUDE_DIR)
 from tools.setup_helpers.nccl import USE_NCCL, USE_SYSTEM_NCCL, NCCL_LIB_DIR, \
     NCCL_INCLUDE_DIR, NCCL_ROOT_DIR, NCCL_SYSTEM_LIB
+from tools.setup_helpers.rccl import USE_RCCL, RCCL_LIB_DIR, \
+    RCCL_INCLUDE_DIR, RCCL_ROOT_DIR, RCCL_SYSTEM_LIB
 from tools.setup_helpers.mkldnn import (USE_MKLDNN, MKLDNN_LIBRARY,
                                         MKLDNN_LIB_DIR, MKLDNN_INCLUDE_DIR)
 from tools.setup_helpers.nnpack import USE_NNPACK
@@ -376,6 +383,8 @@ def build_libs(libs):
             my_env['CMAKE_INSTALL'] = 'make install'
     if USE_SYSTEM_NCCL:
         my_env["NCCL_ROOT_DIR"] = NCCL_ROOT_DIR
+    if USE_RCCL:
+        my_env["RCCL_ROOT_DIR"] = RCCL_ROOT_DIR
     if USE_CUDA:
         my_env["CUDA_BIN_PATH"] = CUDA_HOME
         build_libs_cmd += ['--use-cuda']
@@ -620,6 +629,11 @@ class build_ext(build_ext_parent):
             print('-- Building NCCL library')
         else:
             print('-- Not using NCCL')
+        if USE_RCCL:
+            print('-- Detected RCCL library at ' +
+                  RCCL_SYSTEM_LIB + ', ' + RCCL_INCLUDE_DIR)
+        else:
+            print('-- Not using RCCL')
         if USE_DISTRIBUTED:
             print('-- Building with THD distributed package ')
             if IS_LINUX:
@@ -1040,6 +1054,11 @@ if USE_ROCM:
         "torch/csrc/nn/THCUNN.cpp",
     ]
 
+NCCL_SOURCES = [
+        "torch/csrc/cuda/nccl.cpp",
+        "torch/csrc/cuda/python_nccl.cpp",
+    ]
+
 if USE_NCCL:
     if USE_SYSTEM_NCCL:
         main_link_args += [NCCL_SYSTEM_LIB]
@@ -1047,10 +1066,14 @@ if USE_NCCL:
     else:
         main_link_args += [NCCL_LIB]
     extra_compile_args += ['-DUSE_NCCL']
-    main_sources += [
-        "torch/csrc/cuda/nccl.cpp",
-        "torch/csrc/cuda/python_nccl.cpp",
-    ]
+    main_sources += NCCL_SOURCES
+
+if USE_RCCL:
+    main_link_args += [RCCL_SYSTEM_LIB]
+    include_dirs.append(RCCL_INCLUDE_DIR)
+    extra_compile_args += ['-DUSE_RCCL']
+    main_sources += NCCL_SOURCES
+
 if USE_CUDNN:
     main_libraries += [CUDNN_LIBRARY]
     # NOTE: these are at the front, in case there's another cuDNN in CUDA path

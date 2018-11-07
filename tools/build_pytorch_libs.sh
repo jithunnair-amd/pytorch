@@ -139,8 +139,8 @@ else
 fi
 CPP_FLAGS=" -std=c++11 "
 THD_FLAGS=""
-NCCL_ROOT_DIR=${NCCL_ROOT_DIR:-$INSTALL_DIR}
 if [[ $USE_CUDA -eq 1 ]]; then
+NCCL_ROOT_DIR=${NCCL_ROOT_DIR:-$INSTALL_DIR}
     GLOO_FLAGS+="-DNCCL_ROOT_DIR=$NCCL_ROOT_DIR"
 fi
 # Gloo infiniband support
@@ -346,7 +346,7 @@ function build_caffe2() {
   fi
 
   # This is needed by the aten tests built with caffe2
-  if [ -f "${INSTALL_DIR}/lib/libnccl.so" ] && [ ! -f "lib/libnccl.so.2" ]; then
+  if [[ $USE_CUDA -eq 1 ]] && [ -f "${INSTALL_DIR}/lib/libnccl.so" ] && [ ! -f "lib/libnccl.so.2" ]; then
       # $SYNC_COMMAND root/torch/lib/tmp_install/libnccl root/build/lib/libnccl
       find "${INSTALL_DIR}/lib" -name "libnccl.so*" | xargs -I {} $SYNC_COMMAND {} "lib/"
   fi

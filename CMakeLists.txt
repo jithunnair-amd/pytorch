@@ -93,7 +93,12 @@ option(USE_LMDB "Use LMDB" ON)
 option(USE_METAL "Use Metal for iOS build" ON)
 option(USE_MOBILE_OPENGL "Use OpenGL for mobile code" ON)
 option(USE_NATIVE_ARCH "Use -march=native" OFF)
-option(USE_NCCL "Use NCCL" ON)
+cmake_dependent_option(
+    USE_NCCL "Use NCCL" ON
+    "USE_CUDA" OFF)
+cmake_dependent_option(
+    USE_RCCL "Use RCCL" ON
+    "USE_ROCM" OFF)
 option(USE_SYSTEM_NCCL "Use system-wide NCCL" OFF)
 option(USE_NNAPI "Use NNAPI" OFF)
 option(USE_NNPACK "Use NNPACK" ON)
@@ -147,6 +152,7 @@ if (BUILD_ATEN_ONLY)
   set(USE_GFLAGS OFF)
   set(USE_GLOG OFF)
   set(USE_NCCL OFF)
+  set(USE_RCCL OFF)
   set(USE_NNPACK OFF)
   set(USE_NUMPY OFF)
   set(USE_OPENCV OFF)
