@@ -1,6 +1,6 @@
 import collections
 
-from constants import *
+from pyHIPIFY.constants import *
 
 """ Mapping of CUDA functions, include files, constants, and types to ROCm/HIP equivalents
 This closely follows the implementation in hipify-clang
@@ -241,7 +241,10 @@ CUDA_TYPE_NAME_MAP = collections.OrderedDict([
 ])
 
 CUDA_INCLUDE_MAP = collections.OrderedDict([
-    ("cuda.h", ("hip/hip_runtime.h", CONV_INCLUDE_CUDA_MAIN_H, API_DRIVER)),
+    # since pytorch uses "\b{pattern}\b" as the actual re pattern,
+    # patterns listed here have to begin and end with alnum chars
+    ("include <cuda.h", ("include <hip/hip_runtime.h", CONV_INCLUDE_CUDA_MAIN_H, API_DRIVER)),
+    ('include "cuda.h', ('include "hip/hip_runtime.h', CONV_INCLUDE_CUDA_MAIN_H, API_DRIVER)),
     ("cuda_runtime.h", ("hip/hip_runtime.h", CONV_INCLUDE_CUDA_MAIN_H, API_RUNTIME)),
     ("cuda_runtime_api.h", ("hip/hip_runtime_api.h", CONV_INCLUDE, API_RUNTIME)),
     ("channel_descriptor.h", ("hip/channel_descriptor.h", CONV_INCLUDE, API_RUNTIME)),
@@ -2221,6 +2224,11 @@ CAFFE2_SPECIFIC_MAPPINGS = collections.OrderedDict([
     ("recurrent_network_executor_gpu" , ("hip/recurrent_network_executor_hip", API_CAFFE2)),
     ("max_pool_with_index_gpu", ("hip/max_pool_with_index_hip", API_CAFFE2)),
     ("THCCachingAllocator_gpu", ("hip/THCCachingAllocator_hip", API_CAFFE2)),
+    ("top_k_heap_selection", ("hip/top_k_heap_selection_hip", API_CAFFE2)),
+    ("top_k_radix_selection", ("hip/top_k_radix_selection_hip", API_CAFFE2)),
+    ("GpuDefs", ("hip/GpuDefs_hip", API_CAFFE2)),
+    ("GpuScanUtils", ("hip/GpuScanUtils_hip", API_CAFFE2)),
+    ("GpuBitonicSort", ("hip/GpuBitonicSort_hip", API_CAFFE2)),
     ("caffe2/core/common_cudnn.h", ("caffe2/core/hip/common_miopen.h", API_CAFFE2)),
     ("REGISTER_CUDA_OPERATOR" , ("REGISTER_HIP_OPERATOR", API_CAFFE2)),
     ("CUDA_1D_KERNEL_LOOP" , ("HIP_1D_KERNEL_LOOP", API_CAFFE2)),

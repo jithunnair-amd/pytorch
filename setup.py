@@ -27,6 +27,9 @@
 #   NO_CUDNN
 #     disables the cuDNN build
 #
+#   NO_FBGEMM
+#     disables the FBGEMM build
+#
 #   NO_TEST
 #     disables the test build
 #
@@ -34,7 +37,7 @@
 #     disables the MIOpen build
 #
 #   NO_MKLDNN
-#     disables the MKLDNN build
+#     disables use of MKLDNN
 #
 #   NO_NNPACK
 #     disables NNPACK build
@@ -163,7 +166,7 @@ def hotpatch_var(var, prefix='USE_'):
 
 # Before we run the setup_helpers, let's look for NO_* and WITH_*
 # variables and hotpatch environment with the USE_* equivalent
-use_env_vars = ['CUDA', 'CUDNN', 'MIOPEN', 'MKLDNN', 'NNPACK', 'DISTRIBUTED',
+use_env_vars = ['CUDA', 'CUDNN', 'FBGEMM', 'MIOPEN', 'MKLDNN', 'NNPACK', 'DISTRIBUTED',
                 'OPENCV', 'QNNPACK', 'FFMPEG', 'SYSTEM_NCCL', 'GLOO_IBVERBS']
 list(map(hotpatch_var, use_env_vars))
 
@@ -178,6 +181,7 @@ from tools.setup_helpers.build import (BUILD_BINARY, BUILD_TEST,
 from tools.setup_helpers.rocm import USE_ROCM, ROCM_HOME, ROCM_VERSION
 from tools.setup_helpers.cudnn import (USE_CUDNN, CUDNN_LIBRARY,
                                        CUDNN_LIB_DIR, CUDNN_INCLUDE_DIR)
+from tools.setup_helpers.fbgemm import USE_FBGEMM
 from tools.setup_helpers.miopen import (USE_MIOPEN, MIOPEN_LIBRARY,
                                         MIOPEN_LIB_DIR, MIOPEN_INCLUDE_DIR)
 from tools.setup_helpers.nccl import USE_NCCL, USE_SYSTEM_NCCL, NCCL_LIB_DIR, \
@@ -202,8 +206,15 @@ DEBUG = check_env_flag('DEBUG')
 IS_WINDOWS = (platform.system() == 'Windows')
 IS_DARWIN = (platform.system() == 'Darwin')
 IS_LINUX = (platform.system() == 'Linux')
+IS_PPC = (platform.machine() == 'ppc64le')
 
 BUILD_PYTORCH = check_env_flag('BUILD_PYTORCH')
+# ppc64le does not support MKLDNN
+if IS_PPC:
+    USE_MKLDNN = check_env_flag('USE_MKLDNN', 'OFF')
+else:
+    USE_MKLDNN = check_env_flag('USE_MKLDNN', 'ON')
+
 USE_CUDA_STATIC_LINK = check_env_flag('USE_CUDA_STATIC_LINK')
 RERUN_CMAKE = True
 
@@ -220,10 +231,8 @@ if not ONNX_NAMESPACE:
 try:
     import ninja
     USE_NINJA = True
-    ninja_global = NinjaBuilder('global')
 except ImportError:
     USE_NINJA = False
-    ninja_global = None
 
 # Constant known variables used throughout this file
 cwd = os.path.dirname(os.path.abspath(__file__))
@@ -236,9 +245,14 @@ rel_site_packages = distutils.sysconfig.get_python_lib(prefix='')
 # full absolute path to the dir above
 full_site_packages = distutils.sysconfig.get_python_lib()
 # CMAKE: full path to python library
-cmake_python_library = "{}/{}".format(
-    distutils.sysconfig.get_config_var("LIBDIR"),
-    distutils.sysconfig.get_config_var("INSTSONAME"))
+if IS_WINDOWS:
+    cmake_python_library = "{}/libs/python{}.lib".format(
+        distutils.sysconfig.get_config_var("prefix"),
+        distutils.sysconfig.get_config_var("VERSION"))
+else:
+    cmake_python_library = "{}/{}".format(
+        distutils.sysconfig.get_config_var("LIBDIR"),
+        distutils.sysconfig.get_config_var("INSTSONAME"))
 cmake_python_include_dir = distutils.sysconfig.get_python_inc()
 
 
@@ -340,10 +354,7 @@ class create_version_file(PytorchCommand):
 ################################################################################
 
 # All libraries that torch could depend on
-dep_libs = [
-    'nccl', 'caffe2',
-    'libshm', 'libshm_windows'
-]
+dep_libs = ['caffe2']
 
 missing_pydep = '''
 Missing build dependency: Unable to `import {importname}`.
@@ -371,7 +382,12 @@ def build_libs(libs):
     my_env["PYTORCH_PYTHON_LIBRARY"] = cmake_python_library
     my_env["PYTORCH_PYTHON_INCLUDE_DIR"] = cmake_python_include_dir
     my_env["PYTORCH_BUILD_VERSION"] = version
-    my_env["CMAKE_PREFIX_PATH"] = full_site_packages
+
+    cmake_prefix_path = full_site_packages
+    if "CMAKE_PREFIX_PATH" in my_env:
+        cmake_prefix_path = my_env["CMAKE_PREFIX_PATH"] + ";" + cmake_prefix_path
+    my_env["CMAKE_PREFIX_PATH"] = cmake_prefix_path
+
     my_env["NUM_JOBS"] = str(NUM_JOBS)
     my_env["ONNX_NAMESPACE"] = ONNX_NAMESPACE
     if not IS_WINDOWS:
@@ -392,6 +408,8 @@ def build_libs(libs):
             my_env["NVTOOLEXT_HOME"] = NVTOOLEXT_HOME
     if USE_CUDA_STATIC_LINK:
         build_libs_cmd += ['--cuda-static-link']
+    if USE_FBGEMM:
+        build_libs_cmd += ['--use-fbgemm']
     if USE_ROCM:
         build_libs_cmd += ['--use-rocm']
     if USE_NNPACK:
@@ -405,9 +423,6 @@ def build_libs(libs):
         my_env["MIOPEN_LIBRARY"] = MIOPEN_LIBRARY
         my_env["MIOPEN_INCLUDE_DIR"] = MIOPEN_INCLUDE_DIR
     if USE_MKLDNN:
-        my_env["MKLDNN_LIB_DIR"] = MKLDNN_LIB_DIR
-        my_env["MKLDNN_LIBRARY"] = MKLDNN_LIBRARY
-        my_env["MKLDNN_INCLUDE_DIR"] = MKLDNN_INCLUDE_DIR
         build_libs_cmd += ['--use-mkldnn']
     if USE_QNNPACK:
         build_libs_cmd += ['--use-qnnpack']
@@ -461,22 +476,20 @@ class build_deps(PytorchCommand):
         def check_file(f):
             if not os.path.exists(f):
                 print("Could not find {}".format(f))
-                print("Did you run 'git submodule update --init'?")
+                print("Did you run 'git submodule update --init --recursive'?")
                 sys.exit(1)
 
         check_file(os.path.join(third_party_path, "gloo", "CMakeLists.txt"))
         check_file(os.path.join(third_party_path, "pybind11", "CMakeLists.txt"))
         check_file(os.path.join(third_party_path, 'cpuinfo', 'CMakeLists.txt'))
-        check_file(os.path.join(third_party_path, 'catch', 'CMakeLists.txt'))
         check_file(os.path.join(third_party_path, 'onnx', 'CMakeLists.txt'))
         check_file(os.path.join(third_party_path, 'QNNPACK', 'CMakeLists.txt'))
+        check_file(os.path.join(third_party_path, 'fbgemm', 'CMakeLists.txt'))
 
         check_pydep('yaml', 'pyyaml')
         check_pydep('typing', 'typing')
 
         libs = []
-        if USE_NCCL and not USE_SYSTEM_NCCL:
-            libs += ['nccl']
         libs += ['caffe2']
         build_libs(libs)
 
@@ -619,7 +632,7 @@ class build_ext(build_ext_parent):
         else:
             print('-- Not using CUDA')
         if USE_MKLDNN:
-            print('-- Detected MKLDNN at ' + MKLDNN_LIBRARY + ', ' + MKLDNN_INCLUDE_DIR)
+            print('-- Using MKLDNN')
         else:
             print('-- Not using MKLDNN')
         if USE_NCCL and USE_SYSTEM_NCCL:
@@ -644,12 +657,16 @@ class build_ext(build_ext_parent):
         else:
             print('-- Building without distributed package')
 
-        generate_code(ninja_global)
-
         if USE_NINJA:
+            ninja_builder = NinjaBuilder('global')
+
+            generate_code(ninja_builder)
+
             # before we start the normal build make sure all generated code
             # gets built
-            ninja_global.run()
+            ninja_builder.run()
+        else:
+            generate_code(None)
 
         # It's an old-style class in Python 2.7...
         setuptools.command.build_ext.build_ext.run(self)
@@ -830,6 +847,8 @@ else:
         '-Wno-missing-braces',
         # gcc7 seems to report spurious warnings with this enabled
         "-Wno-stringop-overflow",
+        # gcc7 also reports spurious warnings with this enabled
+        "-Wno-maybe-uninitialized",
     ]
     if check_env_flag('WERROR'):
         extra_compile_args.append('-Werror')
@@ -858,6 +877,7 @@ if USE_ROCM:
 THD_LIB = os.path.join(lib_path, 'libTHD.a')
 NCCL_LIB = os.path.join(lib_path, 'libnccl.so.2')
 C10D_LIB = os.path.join(lib_path, 'libc10d.a')
+GLOO_LIB = os.path.join(lib_path, 'libgloo.a')
 GLOO_CUDA_LIB = os.path.join(lib_path, 'libgloo_cuda.a')
 
 # static library only
@@ -971,6 +991,7 @@ if USE_DISTRIBUTED:
         extra_compile_args.append('-DUSE_C10D')
         main_sources.append('torch/csrc/distributed/c10d/init.cpp')
         main_link_args.append(C10D_LIB)
+        main_link_args.append(GLOO_LIB)
         if USE_CUDA:
             main_sources.append('torch/csrc/distributed/c10d/ddp.cpp')
             main_link_args.append(GLOO_CUDA_LIB)
@@ -1061,10 +1082,9 @@ NCCL_SOURCES = [
 
 if USE_NCCL:
     if USE_SYSTEM_NCCL:
-        main_link_args += [NCCL_SYSTEM_LIB]
         include_dirs.append(NCCL_INCLUDE_DIR)
     else:
-        main_link_args += [NCCL_LIB]
+        include_dirs.append("build/nccl/include")
     extra_compile_args += ['-DUSE_NCCL']
     main_sources += NCCL_SOURCES
 
@@ -1223,7 +1243,9 @@ if __name__ == '__main__':
                 'lib/include/c10/*.h',
                 'lib/include/c10/macros/*.h',
                 'lib/include/c10/util/*.h',
+                'lib/include/c10/detail/*.h',
                 'lib/include/caffe2/core/*.h',
+                'lib/include/caffe2/proto/*.h',
                 'lib/include/torch/*.h',
                 'lib/include/torch/csrc/*.h',
                 'lib/include/torch/csrc/api/include/torch/*.h',
