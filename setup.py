@@ -119,11 +119,6 @@
 #   RCCL_INCLUDE_DIR
 #     specify where rccl is installed
 #
-#   MKLDNN_LIB_DIR
-#   MKLDNN_LIBRARY
-#   MKLDNN_INCLUDE_DIR
-#     specify where MKLDNN is installed
-#
 #   NVTOOLSEXT_PATH (Windows only)
 #     specify where nvtoolsext is installed
 #
@@ -188,8 +183,6 @@ from tools.setup_helpers.nccl import USE_NCCL, USE_SYSTEM_NCCL, NCCL_LIB_DIR, \
     NCCL_INCLUDE_DIR, NCCL_ROOT_DIR, NCCL_SYSTEM_LIB
 from tools.setup_helpers.rccl import USE_RCCL, RCCL_LIB_DIR, \
     RCCL_INCLUDE_DIR, RCCL_ROOT_DIR, RCCL_SYSTEM_LIB
-from tools.setup_helpers.mkldnn import (USE_MKLDNN, MKLDNN_LIBRARY,
-                                        MKLDNN_LIB_DIR, MKLDNN_INCLUDE_DIR)
 from tools.setup_helpers.nnpack import USE_NNPACK
 from tools.setup_helpers.qnnpack import USE_QNNPACK
 from tools.setup_helpers.nvtoolext import NVTOOLEXT_HOME
