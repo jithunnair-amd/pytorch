@@ -712,7 +712,7 @@ if(NOT BUILD_ATEN_MOBILE)
     set(Caffe2_HIP_DEPENDENCY_LIBS
       ${rocrand_LIBRARIES} ${hiprand_LIBRARIES} ${PYTORCH_HIP_HCC_LIBRARIES} ${PYTORCH_MIOPEN_LIBRARIES} ${hipsparse_LIBRARIES})
     if(USE_RCCL)
-      list(APPEND Caffe2_HIP_DEPENDENCY_LIBS ${rccl_libraries})
+      list(APPEND Caffe2_HIP_DEPENDENCY_LIBS ${PYTORCH_RCCL_LIBRARIES})
     endif(USE_RCCL)
     # TODO: There is a bug in rocblas and rocfft's cmake files that exports the wrong targets name in ${rocblas_LIBRARIES} and ${rocfft_LIBRARIES} respectively
     list(APPEND Caffe2_HIP_DEPENDENCY_LIBS
