@@ -95,6 +95,12 @@
         "s_constants": {
             "inverse_indices_kernel<<<": "inverse_indices_kernel<scalar_t><<<"
         }
+      },
+      {
+        "path": "torch/lib/c10d/NCCLUtils.hpp",
+        "s_constants": {
+            "<nccl.h>": "\"c10d/rccl1_compat.h\""
+        }
       }
     ],
   "disabled_modules": [

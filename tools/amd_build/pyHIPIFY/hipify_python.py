@@ -1370,6 +1370,19 @@ def hipify(
                     extensions_to_hip_suffix=extensions_to_hip_suffix),
                 KernelTemplateParams)
 
+    # copy rccl compat file to c10d
+    rccl_compat_file = "rccl1_compat.h"
+    rccl_compat_src_filepath = os.path.join(os.path.dirname(__file__), rccl_compat_file)
+    if not os.path.exists(rccl_compat_src_filepath):
+      print("ERROR: File does not exist: " + rccl_compat_src_filepath)
+      sys.exit(1)
+    rccl_compat_dst_dir = os.path.join(args.output_directory, "torch", "lib", "c10d")
+    if not os.path.exists(rccl_compat_dst_dir):
+      print("ERROR: Directory does not exist: " + rccl_compat_dst_dir)
+      sys.exit(1)
+    rccl_compat_dst_filepath = os.path.join(rccl_compat_dst_dir, rccl_compat_file)
+    shutil.copy(rccl_compat_src_filepath, rccl_compat_dst_filepath)
+
 
 if __name__ == '__main__':
     main()
