@@ -21,6 +21,21 @@ else()
   message(STATUS "Building C10D without CUDA support")
 endif()
 
+if(USE_ROCM)
+  find_package(HIP)
+  if(HIP_FOUND)
+    set(C10D_USE_ROCM true)
+    message(STATUS "Building C10D with ROCM support")
+    add_definitions(-DUSE_ROCM=1 -D__HIP_PLATFORM_HCC__=1)
+  else()
+    set(C10D_USE_ROCM false)
+    message(STATUS "HIP not found, building C10D without ROCM support")
+  endif()
+else()
+  set(C10D_USE_ROCM false)
+  message(STATUS "Building C10D without ROCM support")
+endif()
+
 find_package(MPI)
 if(MPI_FOUND)
   message(STATUS "MPI_INCLUDE_PATH: ${MPI_INCLUDE_PATH}")
@@ -36,6 +51,10 @@ endfunction()
 
 if(USE_NCCL)
   option(USE_C10D_NCCL "USE C10D NCCL" ON)
+endif()
+
+if(USE_RCCL)
+  option(USE_C10D_RCCL "USE C10D RCCL" ON)
 endif()
 
 if(MPI_FOUND)
@@ -57,6 +76,11 @@ if(C10D_USE_CUDA)
   set(C10D_LIBS
     caffe2_gpu
     )
+elseif(C10D_USE_ROCM)
+  list(APPEND C10D_SRCS CUDAUtils.cpp)
+  set(C10D_LIBS
+    caffe2_hip
+    )
 else()
   set(C10D_LIBS
     caffe2
@@ -64,9 +88,16 @@ else()
 endif()
 
 
-if(USE_NCCL)
+if(USE_NCCL OR USE_RCCL)
   list(APPEND C10D_SRCS ProcessGroupNCCL.cpp)
+endif()
+
+if(USE_NCCL)
   list(APPEND C10D_LIBS __caffe2_nccl)
+endif()
+
+if(USE_RCCL)
+  list(APPEND C10D_LIBS ${PYTORCH_RCCL_LIBRARIES})
 endif()
 
 if(MPI_FOUND)
@@ -119,9 +150,14 @@ copy_header(Types.hpp)
 copy_header(Utils.hpp)
 copy_header(ProcessGroupGloo.hpp)
 
-if(USE_NCCL)
+if(USE_NCCL OR USE_RCCL)
   copy_header(ProcessGroupNCCL.hpp)
   copy_header(NCCLUtils.hpp)
+endif()
+
+if(USE_RCCL)
+  copy_header(rccl1_compat.h)
+  target_include_directories(c10d PUBLIC ${RCCL_INCLUDE_DIRS})
 endif()
 
 if(MPI_FOUND)

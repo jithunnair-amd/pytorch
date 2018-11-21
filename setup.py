@@ -985,8 +985,9 @@ if USE_DISTRIBUTED:
         main_sources.append('torch/csrc/distributed/c10d/init.cpp')
         main_link_args.append(C10D_LIB)
         main_link_args.append(GLOO_LIB)
-        if USE_CUDA:
+        if USE_CUDA or USE_ROCM:
             main_sources.append('torch/csrc/distributed/c10d/ddp.cpp')
+        if USE_CUDA:
             main_link_args.append(GLOO_CUDA_LIB)
 
 if USE_CUDA:
