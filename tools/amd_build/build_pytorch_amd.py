@@ -29,10 +29,10 @@ for filename in os.listdir(os.path.join(amd_build_dir, "patches")):
 
 # Make various replacements inside AMD_BUILD/torch directory
 ignore_files = ["csrc/autograd/profiler.h", "csrc/autograd/profiler.cpp",
-                "csrc/cuda/cuda_check.h"]
+                "csrc/cuda/cuda_check.h", "torch/lib/c10d/ProcessGroupGloo.hpp", "torch/lib/c10d/ProcessGroupGloo.cpp"]
 for root, _directories, files in os.walk(os.path.join(proj_dir, "torch")):
     for filename in files:
-        if filename.endswith(".cpp") or filename.endswith(".h"):
+        if filename.endswith(".cpp") or filename.endswith(".h") or filename.endswith(".hpp"):
             source = os.path.join(root, filename)
             # Disabled files
             if reduce(lambda result, exclude: source.endswith(exclude) or result, ignore_files, False):
