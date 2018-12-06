@@ -72,4 +72,4 @@ if USE_ROCM and not IS_DARWIN and not IS_WINDOWS and not check_negative_env_flag
 
    if RCCL_LIB_DIR is not None and RCCL_INCLUDE_DIR is not None:
        USE_RCCL = True
-       RCCL_ROOT_DIR = os.path.commonprefix((NCCL_LIB_DIR, NCCL_INCLUDE_DIR))
+       RCCL_ROOT_DIR = os.path.commonprefix((RCCL_LIB_DIR, RCCL_INCLUDE_DIR))
