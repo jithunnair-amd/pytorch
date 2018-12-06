@@ -1376,7 +1376,7 @@ def hipify(
     if not os.path.exists(rccl_compat_src_filepath):
       print("ERROR: File does not exist: " + rccl_compat_src_filepath)
       sys.exit(1)
-    rccl_compat_dst_dir = os.path.join(args.output_directory, "torch", "lib", "c10d")
+    rccl_compat_dst_dir = os.path.join(output_directory, "torch", "lib", "c10d")
     if not os.path.exists(rccl_compat_dst_dir):
       print("ERROR: Directory does not exist: " + rccl_compat_dst_dir)
       sys.exit(1)
