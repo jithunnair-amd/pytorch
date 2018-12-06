@@ -77,7 +77,6 @@ if(C10D_USE_CUDA)
     caffe2_gpu
     )
 elseif(C10D_USE_ROCM)
-  list(APPEND C10D_SRCS CUDAUtils.cpp)
   set(C10D_LIBS
     caffe2_hip
     )
