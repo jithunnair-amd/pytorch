@@ -6,7 +6,7 @@ from .env import IS_CONDA, IS_LINUX, IS_WINDOWS, CONDA_DIR, check_env_flag, chec
 from .cuda import USE_CUDA
 
 # On ROCm, RCCL development isn't complete. https://github.com/ROCmSoftwarePlatform/rccl
-USE_DISTRIBUTED = not check_negative_env_flag("USE_DISTRIBUTED") and not IS_WINDOWS and not check_env_flag("USE_ROCM")
+USE_DISTRIBUTED = not check_negative_env_flag("USE_DISTRIBUTED") and not IS_WINDOWS# and not check_env_flag("USE_ROCM")
 USE_GLOO_IBVERBS = False
 
 IB_DEVINFO_CMD = "ibv_devinfo"
