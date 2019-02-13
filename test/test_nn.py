@@ -3237,6 +3237,7 @@ class TestNN(NNTestCase):
             self.assertFalse(output.requires_grad)
 
     @unittest.skipIf(not TEST_MULTIGPU, "multi-GPU not supported")
+    @skipIfRocm
     def test_replicate(self):
         module = nn.Linear(10, 5).float().cuda()
         input = Variable(torch.randn(2, 10).float().cuda())
@@ -3345,6 +3346,7 @@ class TestNN(NNTestCase):
         local_test(out)
 
     @unittest.skipIf(not TEST_MULTIGPU, "multi-GPU not supported")
+    @skipIfRocm
     def test_data_parallel_small_back(self):
         l = nn.Linear(10, 5).float().cuda()
         i = Variable(torch.randn(20, 10).float().cuda())
@@ -3391,6 +3393,7 @@ class TestNN(NNTestCase):
         self.assertRaises(AssertionError, lambda: dp.data_parallel(l, i, (0, 1)))
 
     @unittest.skipIf(not TEST_MULTIGPU, "multi-GPU not supported")
+    @skipIfRocm
     def test_data_parallel(self):
         l = nn.Linear(10, 5).float().cuda()
         i = Variable(torch.randn(20, 10).float().cuda(1))
@@ -3494,6 +3497,7 @@ class TestNN(NNTestCase):
 
     @unittest.skipIf(not TEST_CUDA, "CUDA unavailable")
     @repeat_test_for_types(ALL_TENSORTYPES)
+    @skipIfRocm
     def test_data_parallel_module(self, dtype=torch.float):
         l = nn.Linear(10, 5).to("cuda", dtype)
         i = torch.randn(20, 10, device="cuda", dtype=dtype)
@@ -3505,6 +3509,7 @@ class TestNN(NNTestCase):
 
     @unittest.skipIf(not TEST_CUDA, "CUDA unavailable")
     @repeat_test_for_types(ALL_TENSORTYPES)
+    @skipIfRocm
     def test_data_parallel_module_kwargs_only(self, dtype=torch.float):
         class Net(nn.Module):
             def __init__(self):
@@ -3524,6 +3529,7 @@ class TestNN(NNTestCase):
 
     @unittest.skipIf(not TEST_CUDA, "CUDA unavailable")
     @repeat_test_for_types(ALL_TENSORTYPES)
+    @skipIfRocm
     def test_data_parallel_module_kwargs_only_empty_list(self, dtype=torch.float):
         class Net(nn.Module):
             def __init__(self):
@@ -3543,6 +3549,7 @@ class TestNN(NNTestCase):
 
     @unittest.skipIf(not TEST_CUDA, "CUDA unavailable")
     @repeat_test_for_types(ALL_TENSORTYPES)
+    @skipIfRocm
     def test_data_parallel_module_kwargs_only_empty_dict(self, dtype=torch.float):
         class Net(nn.Module):
             def __init__(self):
@@ -3562,6 +3569,7 @@ class TestNN(NNTestCase):
 
     @unittest.skipIf(not TEST_CUDA, "CUDA unavailable")
     @repeat_test_for_types(ALL_TENSORTYPES)
+    @skipIfRocm
     def test_data_parallel_module_kwargs_only_empty_tuple(self, dtype=torch.float):
         class Net(nn.Module):
             def __init__(self):
@@ -3580,6 +3588,7 @@ class TestNN(NNTestCase):
         self.assertEqual(out.data, expected_out, dtype2prec[dtype])
 
     @unittest.skipIf(not TEST_MULTIGPU, "multi-GPU not supported")
+    @skipIfRocm
     def test_data_parallel_device_args(self):
         cuda0 = torch.device('cuda:0')
         cuda1 = torch.device('cuda:1')
