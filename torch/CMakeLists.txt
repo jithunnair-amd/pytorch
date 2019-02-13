@@ -699,7 +699,6 @@ if (BUILD_PYTHON)
       ${TORCH_SRC_DIR}/csrc/cuda/nccl.cpp
       ${TORCH_SRC_DIR}/csrc/cuda/python_nccl.cpp)
     list(APPEND TORCH_PYTHON_COMPILE_DEFINITIONS USE_RCCL)
-    list(APPEND TORCH_PYTHON_LINK_LIBRARIES __caffe2_nccl)
   endif()
 
   add_custom_target(torch_python_stubs DEPENDS "${TORCH_SRC_DIR}/__init__.pyi")
