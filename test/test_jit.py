@@ -1341,6 +1341,7 @@ class TestJit(JitTestCase):
         self.assertExpectedGraph(ge.graph)
 
     @skipIfNoTorchVision
+    @skipIfRocm
     def test_alexnet(self):
         x = torch.ones(1, 3, 224, 224)
         trace, _ = torch.jit.get_trace_graph(torchvision.models.AlexNet(), x)
