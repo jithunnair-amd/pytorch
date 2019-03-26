@@ -1794,7 +1794,6 @@ class TestNN(NNTestCase):
         m = pickle.loads(pickle.dumps(m))
         self.assertIsInstance(m, nn.Linear)
 
-    @skipIfRocm
     def test_spectral_norm(self):
         input = torch.randn(3, 5)
         m = nn.Linear(5, 7)
@@ -3183,7 +3182,6 @@ class TestNN(NNTestCase):
         _assertGradAndGradgradChecks(self, lambda y: dp.scatter(y, (0, 1)), (x,))
 
     @unittest.skipIf(not TEST_MULTIGPU, "multi-GPU not supported")
-    @skipIfRocm
     def test_scatter_cpu(self):
         self._test_scatter(torch.randn(4, 4))
 
@@ -3234,7 +3232,6 @@ class TestNN(NNTestCase):
         _assertGradAndGradgradChecks(self, lambda x, y: dp.gather((x, y), output_device), inputs)
 
     @unittest.skipIf(not TEST_MULTIGPU, "multi-GPU not supported")
-    @skipIfRocm
     def test_gather_cpu(self):
         self._test_gather(-1)
 
@@ -3255,7 +3252,6 @@ class TestNN(NNTestCase):
             _ = dp.gather(inputs, target_device=0)
 
     @unittest.skipIf(not TEST_MULTIGPU, "multi-GPU not supported")
-    @skipIfRocm
     def test_broadcast_double_backwards_gpu(self):
         tensors = (torch.randn(4, 4, device='cuda', requires_grad=True),
                    torch.randn(4, 4, device='cuda', requires_grad=True),
@@ -3351,7 +3347,6 @@ class TestNN(NNTestCase):
                 self.assertEqual(out.data, expected)
 
     @unittest.skipIf(not TEST_MULTIGPU, "multi-GPU not supported")
-    @skipIfRocm
     def test_data_parallel_multiple_input(self):
         class TestModule(nn.Module):
 
