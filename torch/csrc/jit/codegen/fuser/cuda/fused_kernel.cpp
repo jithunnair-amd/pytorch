@@ -149,6 +149,7 @@ FusedKernelCUDA::FusedKernelCUDA(
 #else
   AT_CUDA_DRIVER_CHECK(nvrtc().cuOccupancyMaxActiveBlocksPerMultiprocessor(
       &maxBlocks_, function_, 128, 0));
+#endif
   maxBlocks_ *= prop_->multiProcessorCount;
 
   // Resets device (end of hacked at::DeviceGuard)

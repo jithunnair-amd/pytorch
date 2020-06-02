@@ -136,6 +136,7 @@ void SpatialSoftMax_getLaunchSizes(
 #else
   cudaOccupancyMaxActiveBlocksPerMultiprocessor(&max_active_blocks,
                                                 k, block_threads, smem_size);
+#endif
   max_active_blocks *= at::cuda::getCurrentDeviceProperties()->multiProcessorCount;
   grid = SpatialSoftMax_getGridSize(block, max_active_blocks, outer_size, dim_size, inner_size);
 }
