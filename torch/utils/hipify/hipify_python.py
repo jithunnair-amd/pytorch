@@ -570,9 +570,9 @@ def is_pytorch_file(rel_filepath):
     return False
 
 
-def is_cusparse_file(filepath):
-    if is_pytorch_file(filepath):
-        return "sparse" in filepath.lower()
+def is_cusparse_file(rel_filepath):
+    if is_pytorch_file(rel_filepath):
+        return "sparse" in rel_filepath.lower()
     return False
 
 def is_caffe2_gpu_file(rel_filepath):
@@ -732,7 +732,7 @@ def preprocessor(
     if is_pytorch_extension:
         output_source = RE_PYTORCH_PREPROCESSOR.sub(pt_repl, output_source)
     else:
-        if is_cusparse_file(filepath):
+        if is_cusparse_file(rel_filepath):
             output_source = RE_PYTORCH_PREPROCESSOR.sub(pt_sparse_repl, output_source)
         elif is_pytorch_file(rel_filepath):
             output_source = RE_PYTORCH_PREPROCESSOR.sub(pt_repl, output_source)
