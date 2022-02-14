@@ -946,6 +946,7 @@ def hipify(
     is_pytorch_extension: bool = False,
     hipify_extra_files_only: bool = False,
     clean_ctx: Optional[GeneratedFileCleaner] = None
+) -> HipifyFinalResult:
     if project_directory == "":
         project_directory = os.getcwd()
 
