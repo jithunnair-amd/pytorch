@@ -124,7 +124,7 @@ struct _cuda_scatter_gather_internal_kernel {
 
     };
 
-    _launch_scatter_gather_kernel<num_threads, thread_work_size>(iter.numel(), loop);
+    _launch_scatter_gather_kernel<num_threads(), thread_work_size()>(iter.numel(), loop);
   }
 }; // struct _cuda_scatter_fill_internal_kernel
 
@@ -320,7 +320,7 @@ struct _cuda_scatter_fill_internal_kernel {
 
     };
 
-    _launch_scatter_gather_kernel<num_threads, thread_work_size>(iter.numel(), loop);
+    _launch_scatter_gather_kernel<num_threads(), thread_work_size()>(iter.numel(), loop);
   }
 }; // struct _cuda_scatter_fill_internal_kernel
 
