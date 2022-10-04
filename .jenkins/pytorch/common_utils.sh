@@ -65,7 +65,7 @@ function file_diff_from_base() {
   set +e
   git fetch origin release/1.10.1 --quiet
   set -e
-  git diff --name-only "$(git merge-base origin/release/1.10 HEAD)" > "$1"
+  git diff --name-only "$(git merge-base origin/release/1.10.1 HEAD)" > "$1"
 }
 
 function get_bazel() {
