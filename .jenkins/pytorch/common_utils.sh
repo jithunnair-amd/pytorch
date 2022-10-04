@@ -63,7 +63,7 @@ function get_pr_change_files() {
 function file_diff_from_base() {
   # The fetch may fail on Docker hosts, this fetch is necessary for GHA
   set +e
-  git fetch origin release/1.10 --quiet
+  git fetch origin release/1.10.1 --quiet
   set -e
   git diff --name-only "$(git merge-base origin/release/1.10 HEAD)" > "$1"
 }
