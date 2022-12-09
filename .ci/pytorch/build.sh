@@ -309,3 +309,16 @@ if [[ "$BUILD_ENVIRONMENT" != *libtorch* && "$BUILD_ENVIRONMENT" != *bazel* ]]; 
 fi
 
 print_sccache_stats
+
+#temp - build triton for ROCm
+echo "Building Triton **************************************************************"
+cd /var/lib/jenkins
+export TRITON_USE_ROCM=ON
+git clone https://github.com/ROCmSoftwarePlatform/triton
+cd triton/python
+pip install -e .
+
+echo "Building and Installing Triton completed from ROCm fork!!!!!!!"
+
+cd /var/lib/jenkins
+
