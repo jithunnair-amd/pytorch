@@ -313,6 +313,7 @@ print_sccache_stats
 #temp - build triton for ROCm
 echo "Building Triton **************************************************************"
 cd /var/lib/jenkins
+rm -rf triton
 export TRITON_USE_ROCM=ON
 git clone https://github.com/ROCmSoftwarePlatform/triton
 cd triton/python
