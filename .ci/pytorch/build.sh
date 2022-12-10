@@ -314,7 +314,8 @@ print_sccache_stats
 echo "Building Triton **************************************************************"
 cd /var/lib/jenkins
 rm -rf triton
-export TRITON_USE_ROCM=ON
+echo "export TRITON_USE_ROCM=ON" > /tmp/set_triton_env
+source /tmp/set_triton_env
 git clone https://github.com/ROCmSoftwarePlatform/triton
 cd triton/python
 pip install -e .
