@@ -316,7 +316,7 @@ cd /var/lib/jenkins
 rm -rf triton
 echo "export TRITON_USE_ROCM=ON" > /tmp/set_triton_env
 source /tmp/set_triton_env
-git clone https://github.com/ROCmSoftwarePlatform/triton
+git clone https://github.com/ROCmSoftwarePlatform/triton -b triton-mlir
 cd triton/python
 pip install -e .
 
