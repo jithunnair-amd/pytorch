@@ -166,6 +166,7 @@ void CUDAGraph::capture_end() {
     AT_CUDA_CHECK(cudaGraphInstantiate(&graph_exec_, graph_, 0));
 #else
     AT_CUDA_CHECK(cudaGraphInstantiate(&graph_exec_, graph_, NULL, NULL, 0));
+#endif
 #if (defined(CUDA_VERSION) && CUDA_VERSION >= 11040)
   } else {
     AT_CUDA_CHECK(cudaGraphInstantiateWithFlags(&graph_exec_,
