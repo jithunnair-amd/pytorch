@@ -310,17 +310,5 @@ fi
 
 print_sccache_stats
 
-#temp - build triton for ROCm
-echo "Building Triton **************************************************************"
-cd /var/lib/jenkins
-rm -rf triton
-echo "export TRITON_USE_ROCM=ON" > /tmp/set_triton_env
-source /tmp/set_triton_env
-git clone https://github.com/ROCmSoftwarePlatform/triton -b triton-mlir
-cd triton/python
-pip install -e .
-
-echo "Building and Installing Triton completed from ROCm fork!!!!!!!"
-
 cd /var/lib/jenkins
 
