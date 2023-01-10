@@ -8,3 +8,5 @@ ubuntu|pytorch|torchdata|main|335eaaa59c86a3b2481c3b5d79a03c8a2d0c990a|https://g
 centos|pytorch|torchdata|main|335eaaa59c86a3b2481c3b5d79a03c8a2d0c990a|https://github.com/pytorch/data
 ubuntu|pytorch|torchaudio|main|8ba323bbf8e30e838ce0f6278412f0decd44c520|https://github.com/pytorch/audio
 centos|pytorch|torchaudio|main|8ba323bbf8e30e838ce0f6278412f0decd44c520|https://github.com/pytorch/audio
+ubuntu|pytorch|triton|triton-mlir-pyt20|7dd9270385cadbdf9d47713cb7360dc1464a6acf|https://github.com/ROCmSoftwarePlatform/triton
+centos|pytorch|triton|triton-mlir-pyt20|7dd9270385cadbdf9d47713cb7360dc1464a6acf|https://github.com/ROCmSoftwarePlatform/triton
