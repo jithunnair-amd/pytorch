@@ -121,6 +121,7 @@ if COLLECT_EXPECT:
     atexit.register(print_seen)
 
 inductor_skips = defaultdict(dict)
+inductor_skips_rocm = defaultdict(dict)
 
 inductor_skips["cpu"] = {
     "linalg.ldl_solve": {b8, f16, f32, f64, i32, i64},  # segfault
