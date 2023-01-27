@@ -66,14 +66,14 @@ install_ubuntu() {
     if [[ $(ver $ROCM_VERSION) -ge $(ver 5.5) ]]; then
         MIOPENHIPGFX=$(apt-cache search --names-only miopen-hip-gfx | awk '{print $1}' | grep -F -v . || true)
         if [[ "x${MIOPENHIPGFX}" = x ]]; then
-          echo "miopen-hip-gfx package not available"
+          echo "miopen-hip-gfx package not available" && exit 1
         else
           DEBIAN_FRONTEND=noninteractive apt-get install -y --allow-unauthenticated ${MIOPENHIPGFX}
         fi
     else
         MIOPENKERNELS=$(apt-cache search --names-only miopenkernels | awk '{print $1}' | grep -F -v . || true)
         if [[ "x${MIOPENKERNELS}" = x ]]; then
-          echo "miopenkernels package not available"
+          echo "miopenkernels package not available" && exit 1
         else
           DEBIAN_FRONTEND=noninteractive apt-get install -y --allow-unauthenticated ${MIOPENKERNELS}
         fi
