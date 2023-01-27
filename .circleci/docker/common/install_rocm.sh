@@ -156,14 +156,14 @@ install_centos() {
   if [[ $(ver $ROCM_VERSION) -ge $(ver 5.5) ]]; then
       MIOPENHIPGFX=$(yum -q search miopen-hip-gfx | grep miopen-hip-gfx | awk '{print $1}'| grep -F kdb. || true)
       if [[ "x${MIOPENHIPGFX}" = x ]]; then
-        echo "miopen-hip-gfx package not available"
+        echo "miopen-hip-gfx package not available" && exit 1
       else
         yum install -y ${MIOPENHIPGFX}
       fi
   else
       MIOPENKERNELS=$(yum -q search miopenkernels | grep miopenkernels- | awk '{print $1}'| grep -F kdb. || true)
       if [[ "x${MIOPENKERNELS}" = x ]]; then
-        echo "miopenkernels package not available"
+        echo "miopenkernels package not available" && exit 1
       else
         yum install -y ${MIOPENKERNELS}
       fi
