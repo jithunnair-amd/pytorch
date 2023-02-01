@@ -309,6 +309,3 @@ if [[ "$BUILD_ENVIRONMENT" != *libtorch* && "$BUILD_ENVIRONMENT" != *bazel* ]]; 
 fi
 
 print_sccache_stats
-
-cd /var/lib/jenkins
-
