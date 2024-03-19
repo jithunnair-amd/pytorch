@@ -19,11 +19,12 @@ jobs:
             --title "$TITLE" \
             --assignee "$ASSIGNEES" \
             --label "$LABELS" \
-            --body "$BODY")
+            --body "$BODY" \
+            --project "PYT-ORT Kanban")
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
-          TITLE: pytorch ROCm ${{ github.event.inputs.rocm_version }}" CI upgrade
+          TITLE: pytorch ROCm ${{ github.event.inputs.rocm_version }} CI upgrade
           ASSIGNEES: jithunnair-amd
           LABELS: pytorch
           BODY: |
