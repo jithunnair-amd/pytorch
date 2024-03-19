@@ -1,0 +1,36 @@
+name: Create PyTorch task issues for every ROCm release
+on: 
+  workflow_dispatch:
+    inputs:
+      rocm_version:
+        description: 'ROCm version'
+        required: true
+
+jobs:
+  create_issue:
+    name: Upgrade upstream CI docker images
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Create issue
+        run: |
+          new_issue_url=$(gh issue create \
+            --title "$TITLE" \
+            --assignee "$ASSIGNEES" \
+            --label "$LABELS" \
+            --body "$BODY")
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          TITLE: pytorch ROCm ${{ github.event.inputs.rocm_version }}" CI upgrade
+          ASSIGNEES: jithunnair-amd
+          LABELS: pytorch
+          BODY: |
+            DOD:
+            - [ ] Upstream PR to upgrade CI docker images
+            - [ ] Add any newly skipped UTs as issues to "PyTorch UT failures" 
+            (https://github.com/orgs/ROCm/projects/15)
+          
+    
+    
