@@ -20,8 +20,7 @@ jobs:
             --title "$TITLE" \
             --assignee "$ASSIGNEES" \
             --label "$LABELS" \
-            --body "$BODY" \
-            --project "PYT-ORT Kanban")
+            --body "$BODY")
           return_value=$(gh project item-add 2 \
             --owner @me \
             --url $new_issue_url)
