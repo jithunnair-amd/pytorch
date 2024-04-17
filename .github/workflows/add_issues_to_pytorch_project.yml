@@ -1,6 +1,7 @@
 name: Add PyTorch task issues to PyTorch Kanban project
 
 on:
+  workflow_dispatch:
   issues:
     types:
       - opened
