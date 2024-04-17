@@ -1,0 +1,21 @@
+name: Add PyTorch task issues to PyTorch Kanban project
+
+on:
+  issues:
+    types:
+      - opened
+
+jobs:
+  add-to-project:
+    name: Add issue to PyTorch Kanban project
+    runs-on: ubuntu-latest
+    permissions:
+      repository-projects: write
+    steps:
+      - uses: actions/add-to-project@v1.0.0
+        with:
+          #project-url: https://github.com/orgs/ROCm/projects/18
+          project-url: https://github.com/users/jithunnair-amd/projects/2
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          labeled: pytorch_rocm_release_tasks
+          label-operator: AND
