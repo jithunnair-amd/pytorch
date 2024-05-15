@@ -7,32 +7,44 @@ on:
         required: true
 
 jobs:
-  create_issue:
+  create-issue:
     name: Upgrade upstream CI docker images
     runs-on: ubuntu-latest
     permissions:
+      contents: read
       issues: write
     steps:
-      - name: Create issue
-        run: |
-          new_issue_url=$(gh issue create \
-            --title "$TITLE" \
-            --assignee "$ASSIGNEES" \
-            --label "$LABELS" \
-            --body "$BODY")
+      - uses: JasonEtco/create-an-issue@v2.9.2
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GH_REPO: ${{ github.repository }}
-          TITLE: pytorch ROCm ${{ github.event.inputs.rocm_version }} CI upgrade
-          ASSIGNEES: jithunnair-amd
-          LABELS: pytorch_rocm_release_tasks
-          BODY: |
-            DOD:
-            - [ ] Upstream PR to upgrade CI docker images
-            - [ ] Add any newly skipped UTs as issues to "PyTorch UT failures" 
-            (https://github.com/orgs/ROCm/projects/15)
-        
-  add_issues_to_project:
-    name: Add created issues to Kanban project
-    uses: ./.github/workflows/add_issues_to_pytorch_project.yml
-    secrets: inherit
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ROCM_VERSION: ${{ github.event.inputs.rocm_version }}
+        with:
+          filename: .github/ISSUE_TEMPLATE_UPGRADE_CI_DOCKER_IMAGES.md
+
+      - run: 'echo Created ${{ steps.create-issue.outputs.url }}'
+
+  
+  # create_issue:
+  #   name: Upgrade upstream CI docker images
+  #   runs-on: ubuntu-latest
+  #   permissions:
+  #     issues: write
+  #   steps:
+  #     - name: Create issue
+  #       run: |
+  #         new_issue_url=$(gh issue create \
+  #           --title "$TITLE" \
+  #           --assignee "$ASSIGNEES" \
+  #           --label "$LABELS" \
+  #           --body "$BODY")
+  #       env:
+  #         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #         GH_REPO: ${{ github.repository }}
+  #         TITLE: pytorch ROCm ${{ github.event.inputs.rocm_version }} CI upgrade
+  #         ASSIGNEES: jithunnair-amd
+  #         LABELS: pytorch_rocm_release_tasks
+  #         BODY: |
+  #           DOD:
+  #           - [ ] Upstream PR to upgrade CI docker images
+  #           - [ ] Add any newly skipped UTs as issues to "PyTorch UT failures" 
+  #           (https://github.com/orgs/ROCm/projects/15)
