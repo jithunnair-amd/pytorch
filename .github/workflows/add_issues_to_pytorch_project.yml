@@ -17,6 +17,6 @@ jobs:
         with:
           #project-url: https://github.com/orgs/ROCm/projects/18
           project-url: https://github.com/users/jithunnair-amd/projects/2
-          github-token: ${{ secrets.ADD_TO_PROJECT }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           labeled: pytorch_rocm_release_tasks
           label-operator: AND
