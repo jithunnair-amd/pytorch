@@ -7,7 +7,7 @@ on:
         required: true
 
 jobs:
-  create-issue:
+  upgrade_ci_docker_images:
     name: Upgrade upstream CI docker images
     runs-on: ubuntu-latest
     permissions:
@@ -16,13 +16,14 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: JasonEtco/create-an-issue@v2.9.2
+        id: create_issue
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ROCM_VERSION: ${{ github.event.inputs.rocm_version }}
         with:
           filename: .github/ISSUE_TEMPLATE_UPGRADE_CI_DOCKER_IMAGES.md
 
-      - run: 'echo Created ${{ steps.create-issue.outputs.url }}'
+      - run: 'echo Created ${{ steps.create_issue.outputs.url }}'
 
   
   # create_issue:
