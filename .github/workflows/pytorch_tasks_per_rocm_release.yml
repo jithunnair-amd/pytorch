@@ -35,3 +35,4 @@ jobs:
   add_issues_to_project:
     name: Add created issues to Kanban project
     uses: ./.github/workflows/add_issues_to_pytorch_project.yml
+    secrets: inherit
