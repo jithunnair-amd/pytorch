@@ -1,5 +1,5 @@
 ---
-title: pytorch ROCm ${{ env.ROCM_VERSION }} CI upgrade
+title: pytorch ROCm {{ env.ROCM_VERSION }} CI upgrade
 assignees: jithunnair-amd
 labels: pytorch_rocm_release_tasks
 ---
