@@ -1,11 +1,9 @@
 name: Add PyTorch task issues to PyTorch Kanban project
 
 on:
-  # issues:
-  #   types:
-  #     - opened
-  #     - labeled
-  workflow_call:
+  issues:
+    types:
+      - labeled
 
 jobs:
   add-to-project:
