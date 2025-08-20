@@ -1,6 +1,55 @@
 name: windows-build
 
 on:
+  workflow_dispatch:
+    inputs:
+      build-environment:
+        required: true
+        type: string
+        description: Top-level label for what's being built/tested.
+      cuda-version:
+        required: true
+        type: string
+        description: What CUDA version to build with, "cpu" for none.
+      use-xpu:
+        required: false
+        type: boolean
+        default: false
+        description: If set, build with XPU support.
+      xpu-version:
+        required: false
+        type: string
+        description: The version of XPU support package.
+      vc-year:
+        required: false
+        type: string
+        default: "2022"
+        description: The Visual Studio year to use for building.
+      build-with-debug:
+        required: false
+        type: boolean
+        default: false
+        description: If set, build in debug mode.
+      sync-tag:
+        required: false
+        type: string
+        default: ""
+        description: |
+          If this is set, our linter will use this to make sure that every other
+          job with the same `sync-tag` is identical.
+      test-matrix:
+        required: false
+        type: string
+        description: |
+          An option JSON description of what test configs to run later on. This
+          is moved here from the Linux test workflow so that we can apply filter
+          logic using test-config labels earlier and skip unnecessary builds
+      runner:
+        required: false
+        type: string
+        default: "windows.4xlarge.nonephemeral"
+        description: |
+          Label of the runner this job should run on.
   workflow_call:
     inputs:
       build-environment:
