@@ -1,0 +1,16 @@
+name: Trigger on PR
+
+on:
+  pull_request:
+    types: [opened]
+
+permissions:
+  contents: write        # create/push tags
+  pull-requests: write   # edit PR body
+ 
+jobs:
+  my_job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: my_step
+        run: echo "Triggered!"
